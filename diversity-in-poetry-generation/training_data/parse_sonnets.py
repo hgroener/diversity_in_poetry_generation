@@ -5,6 +5,7 @@ import numpy as np
 import string
 import os
 import argparse
+import logging
 
 def get_sonnets(lang):
     """
@@ -63,37 +64,9 @@ def split_sonnets(sonnets):
     return list(background), list(train), list(validate), list(test)
 
 
-def word2vec(path, vector_size, alpha, window, min_count, sample, workers, min_alpha, sg, hs, negative, epochs):
-    """
-    Trains a Word2Vec model for obtaining word vectors from input sonnets
-
-    Parameters:
-    ----------
-    path : Path to file containing sentences
-    vector_size : Embedding dimension
-    alpha : Initial learning rate
-    window : Maximum distance between current and predicted word in a sentence
-    min_count : Frequency threshold. Words with a lower frequency will be discarded
-    sample : Frequency threshold for randomly downsampling high-frequency words
-    workers : Number of threads used during training
-    min_alpha : Lower learning rate bound
-    sg : Use CBOW (0) or skip-gram (1) as training algorithm
-    hs : Use hierarchical softmax (0) and otherwise negative sampling (if negative > 0)
-    negative : Deploy negative sampling if > 0
-    epochs : Number of epochs to train
-
-    Returns:
-    -------
-    model : Trained Word2Vec model
-    """
-    documents = LineSentence(path)
-    model = Word2Vec(documents, vector_size, alpha, window, min_count, sample, 
-                     workers, min_alpha, sg, hs, negative, epochs)
-    
-    return model
-
-
 if __name__ == "__main__":
+
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', type=str)
@@ -128,9 +101,11 @@ if __name__ == "__main__":
         f.write('\n'.join(validate))
     with open(output_dir + '/sonnet_test.txt', 'w') as f:
         f.write('\n'.join(test))
-
+    
     if args.get_wv:
-        model = word2vec(path=output_dir + '/sonnet_background.txt', 
+        
+        documents = LineSentence(output_dir + '/sonnet_background.txt')
+        model = Word2Vec(documents, 
                          vector_size=args.vector_size,
                          alpha=args.alpha,
                          window=args.window,
