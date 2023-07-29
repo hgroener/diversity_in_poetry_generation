@@ -6,13 +6,13 @@ import string
 import os
 import argparse
 
-def get_sonnets(lang='en'):
+def get_sonnets(lang):
     """
     Parses QuaTrain data to an input format compatible with Deep-speare and Structured-Adversary.
 
     Parameters:
     ----------
-    language : Language version of QuaTrain. 'en' loads English data, 'de' loads German data.
+    lang : Language version of QuaTrain. 'en' loads English data, 'de' loads German data.
 
     Returns:
     -------
