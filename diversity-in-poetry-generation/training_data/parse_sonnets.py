@@ -87,8 +87,8 @@ def word2vec(path, vector_size, alpha, window, min_count, sample, workers, min_a
     model : Trained Word2Vec model
     """
     documents = LineSentence(path)
-    model = Word2Vec(documents, vector_size, alpha, window, min_count,
-                 sample, workers, min_alpha, sg, hs, negative, epochs)
+    model = Word2Vec(documents, vector_size, alpha, window, min_count, sample, 
+                     workers, min_alpha, sg, hs, negative, epochs)
     
     return model
 
@@ -97,12 +97,12 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', type=str)
-    parser.add_argument('--get_wv', type=bool, default=True)
+    parser.add_argument('--get_wv', action="store_false")
     parser.add_argument('--vector_size', type=int, default=100)
-    parser.add_argument('--alpha', type=int, default=0.025)
+    parser.add_argument('--alpha', type=float, default=0.025)
     parser.add_argument('--window', type=int, default=5)
     parser.add_argument('--min_count', type=int, default=3)
-    parser.add_argument('--sample', type=float, default=1e-5)
+    parser.add_argument('--sample', type=float, default=0.00001)
     parser.add_argument('--workers', type=int, default=16)
     parser.add_argument('--min_alpha', type=float, default=0.0001)
     parser.add_argument('--sg', type=int, default=1)
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         f.write('\n'.join(test))
 
     if args.get_wv:
-        model = word2vec(output_dir + '/sonnet_background.txt', 
+        model = word2vec(path=output_dir + '/sonnet_background.txt', 
                          vector_size=args.vector_size,
                          alpha=args.alpha,
                          window=args.window,
