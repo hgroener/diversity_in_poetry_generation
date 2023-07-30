@@ -3,13 +3,8 @@ from matplotlib import pyplot as plt
 from scipy.stats import chi2_contingency
 from scipy.stats import wasserstein_distance
 import numpy as np
-import os
 import json
 import argparse
-
-current_path = os.path.dirname(os.path.realpath(__file__))
-sample_path = current_path + '/samples/'
-length_path=current_path + '/data/length/'
 
 
 # chi square test
@@ -71,27 +66,7 @@ def wasserstein(path1, path2):
     return wasserstein_distance(length1, length2)
 
 
-def store(model, lang, args):
-    
-    model_path = current_path + '/samples/' + model + '/' + lang 
-    save_path = current_path + '/data/length/' + model + '.txt'
-    
-    if lang == 'en':
-        QuaTrain = current_path + '/data/training_data/QuaTrain/'
-    else:
-        QuaTrain = current_path + '/data/training_data/QuaTrain-de/'
-
-    for t, p, k, pen in args:
-        name = 'temp{}_top_k{}_top_p{}_pen{}'.format(t,k,p,pen)
-        sample_path = model_path + '/' + name + '/'
-        
-        p = chi_square_len(QuaTrain, sample_path)
-        
-        with open(save_path, "a") as myfile:
-            myfile.write('{} : {}\n'.format(name, p))
-
-
-def plot_len_figures(sample_path, name, lang, save_directory):
+def plot_len_figures(sample_path):
     
     ds = load_from_disk(sample_path)
     length = ds['length']
@@ -100,62 +75,15 @@ def plot_len_figures(sample_path, name, lang, save_directory):
     plt.subplots_adjust(left=0.15)
     plt.style.use('seaborn-whitegrid')
     plt.hist(length, bins='auto', facecolor = '#2ab0ff', edgecolor='#169acf', linewidth=0.5, density=True)
-    #plt.title(name + ": Max Similarity")
     plt.xlabel("Quatrain Length", fontsize=17)
     plt.ylabel("Densitiy", fontsize=17)
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    fig.savefig(save_directory + '/' + lang + '-hist-' +  name + '.png', dpi=100)
-
-
-def length_metrics(model, lang, combs):
     
-    value_dict = {}
-    path = sample_path + model + '/' + lang + '/'
-    
-    if lang == 'en':
-        quatrain_path = current_path + '/data/training_data/QuaTrain'
-    else:
-        quatrain_path = current_path + '/data/training_data/QuaTrain-de'
-
-    save_directory = length_path + model
-
-    if not os.path.exists(save_directory):
-        os.makedirs(save_directory)
-    
-    for t, k, p, pen in combs:
-        name ='temp{}_top_k{}_top_p{}_pen{}'.format(t, k, p, pen)
-        sample = path + name
-        
-        m, sd = mean_sd(sample)
-        minimum, maximum = min_max(sample)
-
-        hist_intersection = histogram_intersection(quatrain_path, sample)
-        wasserstein_distance = wasserstein(quatrain_path, sample)
-        
-        value_dict[name] = {}
-
-        value_dict[name]['mean'] = float(m)
-        value_dict[name]['standard_deviation'] = float(sd)
-        value_dict[name]['min'] = int(minimum)
-        value_dict[name]['max'] = int(maximum)
-        value_dict[name]['histogram_intersection'] = float(hist_intersection)
-        value_dict[name]['wasserstein_distance'] = float(wasserstein_distance)
-
-        plot_len_figures(sample, name, lang, save_directory)
-    
-    with open(save_directory + '/' + 'metrics_' + lang + '.json', 'w') as f:
-        json.dump(value_dict, f)
- 
-    return value_dict
+    return fig
 
 
-def process_training_data(lang):
-    
-    if lang == 'en':
-        quatrain_path = current_path + '/data/training_data/QuaTrain'
-    else:
-        quatrain_path = current_path + '/data/training_data/QuaTrain-de'
+def process_training_data(quatrain_path):
     
     quatrain = load_from_disk(quatrain_path)
     length = quatrain['length']
@@ -175,87 +103,50 @@ def process_training_data(lang):
     plt.ylabel("Densitiy", fontsize=17)
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    fig.savefig(current_path + '/data/length/' + lang + '-Quatrain.png', dpi=100)
     
-    with open(current_path + '/data/length/' + lang + '-QuaTrain.json', 'w') as f:
-        json.dump(res, f)
+    return res, fig
 
 
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
+    parser.add_argument('--training_data_only', action="store_true")
     parser.add_argument('--sample_path', type=str)
     parser.add_argument('--quatrain_path', type=str)
     parser.add_argument('--lang', type=str)
-    parser.add_argument('--model_name', type=str)
     parser.add_argument('--out_path', type=str)
+    parser.add_argument('--out_name', type=str)
 
     args = parser.parse_args()
 
-    value_dict = {}
+    if args.training_data_only == True:
+        res, fig = process_training_data(args.quatrain_path)
+        fig.savefig(args.out_path + '/' + args.lang + '-Quatrain.png', dpi=100)
+        with open(args.out_path + '/' + args.lang + '-QuaTrain.json', 'w') as f:
+            json.dump(res, f)
 
-    m, sd = mean_sd(args.sample_path)
-    minimum, maximum = min_max(args.sample_path)
+    else:
+        value_dict = {}
 
-    hist_intersection = histogram_intersection(args.quatrain_path, args.sample_path)
-    wasserstein_distance = wasserstein(args.quatrain_path, args.sample_path)
+        m, sd = mean_sd(args.sample_path)
+        minimum, maximum = min_max(args.sample_path)
+
+        hist_intersection = histogram_intersection(args.quatrain_path, args.sample_path)
+        wasserstein_distance = wasserstein(args.quatrain_path, args.sample_path)
+
+        value_dict['mean'] = float(m)
+        value_dict['standard_deviation'] = float(sd)
+        value_dict['min'] = int(minimum)
+        value_dict['max'] = int(maximum)
+        value_dict['histogram_intersection'] = float(hist_intersection)
+        value_dict['wasserstein_distance'] = float(wasserstein_distance)
+        
+        fig = plot_len_figures(args.sample_path)
+
+        fig.savefig(args.out_path + '/' + args.lang + '-hist-' + args.out_name + '.png' , dpi=100)
+        with open(args.out_path + '/' + args.lang + '-metrics-' + args.out_name + '.json', 'w') as f:
+            json.dump(value_dict, f)
 
 
 
 
-
-
-
-    
-    
-
-
-
-
-process_training_data('en')
-process_training_data('de')
-
-
-
-# english and german
-models1 = ['gpt2-small', 'gpt2-large', 'poetry-gpt2-small', 'poetry-gpt2-large', 'bygpt5-base', 'bygpt5-medium',
-           "poetry-bygpt5-medium", "poetry-bygpt5-base"]
-
-# only english
-models2 = ['gptneo-small', 'gptneo-xl', 'poetry-gptneo-small', 'poetry-gptneo-xl']
-
-# german and english
-models3 = ['deepspeare']
-
-# only english
-models4 = ['structured-adversary']
-
-combs = [(1.0, 0, 1.0, None), #vanilla
-        (1.0, 10, 1.0, 0.6), #contrastive
-        (1.0, 6, 1.0, 0.7), #constrastive
-        (0.7, 0, 0.9, None), #temp, p
-        (1.0, 0, 0.9, None), #p
-        (0.7, 0, 0.7, None), #temp, p
-        (1.0, 0, 0.7, None), #p
-        (1.0, 10, 1.0, None), #top k
-        (0.7, 10, 1.0, None), #temp topk
-        (1.0, 25, 1.0, None), #top k
-        (0.7, 25, 1.0, None), #temp topk
-        ]
-
-combs2 = [(1.0, 0, 1.0, None),
-          (0.7, 0, 1.0, None)]
-
-""" for model in models1:
-    values = length_metrics(model, 'en', combs)
-    values = length_metrics(model, 'de', combs)
-
-for model in models2:
-    values = length_metrics(model, 'en', combs) """
-
-for model in models3:
-    values = length_metrics(model, 'en', combs2)
-    values = length_metrics(model, 'de', combs2)
-
-#for model in models4:
- #   values = length_metrics(model, 'en', combs2)
