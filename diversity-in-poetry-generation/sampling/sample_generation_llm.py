@@ -68,7 +68,6 @@ def sample_pipeline(model, lang, total, temperature, top_k, top_p, penalty_alpha
                                 num_beam_groups=num_beam_groups, lang=lang,
                                 max_length=max_length, min_length=min_length)
     
-
     sample, stats = processQuatrains(sample,lang)
     get_fake_rhymes(sample, stats)
     dist = get_dist(stats, temp=temperature, top_k=top_k, top_p=top_p, num_beams=num_beams, 
@@ -129,6 +128,6 @@ if __name__ == "__main__":
 
     with open(save_path + '/' + name + '/stats.pkl', 'wb') as f:
         pickle.dump(stats, f)
-        
+
     with open(save_path + '/' + name + '/dist.pkl', 'wb') as f:
         pickle.dump(dist, f)
