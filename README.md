@@ -8,6 +8,7 @@ conda create -n diversity-in-poetry-generation python=3.10
 conda activate diversity-in-poetry-generation
 pip install 'git+https://github.com/potamides/uniformers.git#egg=uniformers'
 pip install --upgrade gensim
+conda install -c conda-forge libarchive
 ```
 
 
