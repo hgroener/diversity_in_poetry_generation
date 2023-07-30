@@ -1,7 +1,7 @@
 # Master Thesis: Diversity in Poetry Generation
 This repository contains the code that has been used to conduct experiments in my master thesis about diversity in poetry generation.
 
-### Installation
+## Installation
 It is recommended to set up a virtual environment using Conda with Python 3.10. Dependencies will be installed in this environment:
 ```
 conda create -n diversity-in-poetry-generation python=3.10
@@ -11,9 +11,9 @@ pip install --upgrade gensim
 conda install -c conda-forge libarchive
 ```
 
-### Data Prepation
+## Data Prepation
 
-### Generators
+## Generators
 #### Deep-speare
 #### Structured-Adversary
 #### Unconditioned Large Language Models (LLMs)
