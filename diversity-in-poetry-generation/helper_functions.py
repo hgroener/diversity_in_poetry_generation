@@ -24,6 +24,9 @@ def flatten_list(_2d_list):
             flat_list.append(element)
     return flat_list
 
+def join(examples):
+    examples['text'] = ' '.join(examples['text'])
+    return examples
 
 def get_dataset(quatrains, lang, temps=None):
     ds = {}
