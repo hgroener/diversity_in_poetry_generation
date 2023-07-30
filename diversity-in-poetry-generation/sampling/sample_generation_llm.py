@@ -1,12 +1,9 @@
-from uniformers.utils import QUATRAIN_RHYME_SCHEMES
 from uniformers.models.bygpt5 import ByGPT5LMHeadModel, ByGPT5Tokenizer
 from transformers.pipelines.text_generation import TextGenerationPipeline
 from transformers import pipeline
-from datasets import Dataset
 import pickle
 import string
 import random
-from math import exp
 import torch
 import os
 import sys
