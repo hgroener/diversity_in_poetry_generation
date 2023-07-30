@@ -18,6 +18,7 @@ sys.path.append(parent)
 
 from helper_functions import *
 
+
 def generate_quatrains(model, lang='en', min_length=20, max_length=100, num_samples=1000, save=False, device=0,
                       temperature=1.0, top_k=0, top_p = 1.0, total=100, penalty_alpha=None, do_sample=True,
                       num_beams=1, num_beam_groups=1):
@@ -56,9 +57,6 @@ def generate_quatrains(model, lang='en', min_length=20, max_length=100, num_samp
         #samples.append(random.choice(quatrains))
         
     samples = get_dataset(samples, lang)
-    del generator
-    torch.cuda.empty_cache()
-
     return samples
 
 
@@ -73,7 +71,6 @@ def sample_pipeline(model, total=100, temperature=1.0, top_k=0, top_p=1.0, penal
                                 num_beam_groups=num_beam_groups, lang=lang,
                                 max_length=max_length, min_length=min_length)
     
-    torch.cuda.empty_cache()
 
     sample, stats = processQuatrains(sample,lang)
     get_fake_rhymes(sample, stats)
@@ -81,18 +78,6 @@ def sample_pipeline(model, total=100, temperature=1.0, top_k=0, top_p=1.0, penal
                     num_beam_groups=num_beam_groups, do_sample=do_sample, penalty_alpha=penalty_alpha)
     
     return sample, stats, dist
-
-
-def get_last_word(quatrain):
-    res = []
-    for line in quatrain:
-        line = line.translate(str.maketrans('', '', string.punctuation))
-        if len(line) == 0:
-            continue
-        split = line.split()
-        if len(split) > 0:
-            res.append(line.split()[-1])
-    return res
 
 
 def store_samples(model, lang='en', total=500, num_samples=10, temperature=1.0, top_p=1.0, top_k=0, 
