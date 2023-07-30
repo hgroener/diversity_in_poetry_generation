@@ -54,7 +54,8 @@ def flemmatize(flat_corpus, lang):
                           'ducats', 'cinq', 'raison', 'tuer', 'pomme', 'fêtu', 'malles', 'ille', 'cerebri', 'fuit', 
                           'sheridan', 'pallas', 'quae', 'deorum', 'quisnam', 'melior', 'orto', 'artem', 'tibi', 
                           'natura', 'atque', 'nascenti', 'cunabula', 'scrutandi', 'genium', 'rimandi', 'tradidit', 
-                          'puerorum', 'besieger', 'mayë'])
+                          'puerorum', 'besieger', 'mayë', 'hallgerd', 'whitewater', 'ingathere', 'daïs', 'snæbiorn', 
+                          'howso', 'graithe', 'hallbiorn'])
     else:
         nlp = spacy.load('de_core_news_sm')
         stopWords = stopwords.words('german')
