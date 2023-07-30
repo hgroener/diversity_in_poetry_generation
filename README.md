@@ -15,6 +15,7 @@ pip install cydifflib
 pip install lexical-diversity
 pip install sentence-transformers
 pip install spacy
+pip install pyldavis
 ```
 
 ## Data Prepation
