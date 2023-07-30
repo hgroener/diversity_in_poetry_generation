@@ -2,8 +2,10 @@
 This repository contains the code that has been used to conduct experiments in my master thesis about diversity in poetry generation.
 
 ### Installation
-It is recommended to set up a virtual environment (e.g. using Conda) with Python 3.10. Within this environment, run
+It is recommended to set up a virtual environment using Conda with Python 3.10. Dependencies will be installed in this environment:
 ```
+conda create -n diversity-in-poetry-generation python=3.10
+conda activate diversity-in-poetry-generation
 pip install 'git+https://github.com/potamides/uniformers.git#egg=uniformers'
 pip install --upgrade gensim
 ```
