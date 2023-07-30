@@ -77,43 +77,6 @@ def sample_pipeline(model, lang, total, temperature, top_k, top_p, penalty_alpha
     return sample, stats, dist
 
 
-def store_samples(model, lang='en', total=500, num_samples=10, temperature=1.0, top_p=1.0, top_k=0, 
-                  penalty_alpha=None, max_length=100, min_length=50, local=True):
-    
-    if local:
-        model_path = current_path + '/models/experiments/' + model + '/' + lang
-        save_path = current_path + '/samples/' + model + '/' + lang
-    else:
-        model_path = model
-        save_path = current_path + '/samples/' + model.split('/')[1][:-3] + '/' + lang
-
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-
-    sample, stats, dist = sample_pipeline(model_path, total=total, lang=lang, temperature=temperature,
-                                          top_k=top_k, top_p=top_p, penalty_alpha=penalty_alpha, 
-                                          num_samples=num_samples, max_length=max_length,
-                                          min_length=min_length)
-
-
-    #save_path = current_path + '/samples/' + model + '/' + lang
-
-
-    name ='temp{}_top_k{}_top_p{}_pen{}'.format(temperature, top_k, top_p, penalty_alpha)
-
-    sample.save_to_disk(save_path + '/' + name)
-    with open(save_path + '/' + name + '/stats.pkl', 'wb') as f:
-        pickle.dump(stats, f)
-    with open(save_path + '/' + name + '/dist.pkl', 'wb') as f:
-        pickle.dump(dist, f)
-
-def call_store(models, langs, min, max, local, args, total=10, num_samples=50):
-    for model in models:
-        for lang in langs:
-            for temp, p, k, pen in args:
-                store_samples(model, lang, total, num_samples, temp, p, k, pen, max, min, local)
-                print('{} {} done with temp {}, top_p {}, top_k {}, penalty_alpha {}'.format(model, lang, temp, p, k, pen))
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -163,11 +126,9 @@ if __name__ == "__main__":
 
     # save data
     sample.save_to_disk(save_path + '/' + name)
+
     with open(save_path + '/' + name + '/stats.pkl', 'wb') as f:
         pickle.dump(stats, f)
+        
     with open(save_path + '/' + name + '/dist.pkl', 'wb') as f:
         pickle.dump(dist, f)
-    
-
-    
-
