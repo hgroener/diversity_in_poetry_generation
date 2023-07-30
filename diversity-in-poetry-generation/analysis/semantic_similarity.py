@@ -5,7 +5,6 @@ import torch
 import numpy as np
 from matplotlib import pyplot as plt
 import os
-import json
 import sys
 import argparse
 import pprint
