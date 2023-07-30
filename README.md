@@ -10,6 +10,7 @@ pip install 'git+https://github.com/potamides/uniformers.git#egg=uniformers'
 pip install --upgrade gensim
 conda install -c conda-forge libarchive
 pip install evaluate
+pip install matplotlib
 ```
 
 ## Data Prepation
