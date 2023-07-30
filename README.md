@@ -10,3 +10,7 @@ pip install --upgrade gensim
 
 
 ### Generators
+#### Deep-speare
+#### Structured-Adversary
+#### Unconditioned Large Language Models (LLMs)
+#### Style-conditioned LLMs
