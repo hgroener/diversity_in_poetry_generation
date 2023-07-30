@@ -1,14 +1,13 @@
 from uniformers.models.bygpt5 import ByGPT5LMHeadModel, ByGPT5Tokenizer
 from transformers.pipelines.text_generation import TextGenerationPipeline
 from transformers import pipeline
+from transformers import logging
+import argparse
 import pickle
-import string
-import random
-import torch
 import os
 import sys
 
-from transformers import logging
+
 logging.set_verbosity_warning()
 
 # routine to import parent folder
@@ -116,75 +115,21 @@ def call_store(models, langs, min, max, local, args, total=10, num_samples=50):
             for temp, p, k, pen in args:
                 store_samples(model, lang, total, num_samples, temp, p, k, pen, max, min, local)
                 print('{} {} done with temp {}, top_p {}, top_k {}, penalty_alpha {}'.format(model, lang, temp, p, k, pen))
-    
-#for model in MODELS:
-  #  store_samples(model)
 
-#for model in MODELS_DE:
- #   store_samples(model, lang='de', total=200)
+if __name__ == "__main__":
 
-#model='debug/poetry-gpt2-small-tes/en'
-#store_samples(model, lang='en', total=100)
-
-#print('yo')
-
-#start = time.time()
-#model = current_path + '/models/experiments/bygpt5-medium/en'
-#model = "nllg/poetry-bygpt5-medium-en"
-#sample, stats, dist = sample_pipeline(model, total=10, num_samples=10, lang='en', min_length=50, max_length=350, top_k=10, 
-#                                      penalty_alpha=0.6)
-#print(sample[0])
-#print('\n')
-#print(stats)
-#print('\n')
-#print(dist)
-#print('\n')
-#print(np.min(sample['length']))
-#print(np.mean(sample['length']))
-#print(np.max(sample['length']))
-#end = time.time()
-#print(end - start)
-
-
-
-# english and german, min=40, max=150
-models1 = ['gpt2-small', 'gpt2-large', 'poetry-gpt2-small', 'poetry-gpt2-large']
-#models1 = ['poetry-gpt2-large']
-
-# only english, min=40, max=150
-models2 = ['gptneo-small', 'gptneo-xl', 'poetry-gptneo-small', 'poetry-gptneo-xl']
-
-# english and german, min=50, max=300
-models3 = ['bygpt5-base', 'bygpt5-medium']
-
-# english, non local, min=50, max=300
-models4 = ["nllg/poetry-bygpt5-medium-en", "nllg/poetry-bygpt5-base-en"]
-
-# german, non local, min=50, max=300
-models5 = ["nllg/poetry-bygpt5-medium-de", "nllg/poetry-bygpt5-base-de"]
-
-# temp, p, k, pen, max, min, local
-args = [(1.0, 1.0, 0, None), #vanilla
-        (1.0, 1.0, 10, 0.6), #contrastive
-        (1.0, 1.0, 6, 0.7), #constrastive
-        (0.7, 0.9, 0, None), #temp, p
-        (1.0, 0.9, 0, None), #p
-        (0.7, 0.7, 0, None), #temp, p
-        (1.0, 0.7, 0, None), #p
-        (1.0, 1.0, 10, None), #top k
-        (0.7, 1.0, 10, None), #temp topk
-        (1.0, 1.0, 25, None), #top k
-        (0.7, 1.0, 25, None), #temp topk
-        ]
-
-#args = [(0.7, 0.7, 0, None), (1.0, 0.7, 0, None)]
-#args = [(1.0, 0.7, 0, None)]
-
-#call_store(models1, ['de'], 40, 120, True, args, 10, 50)
-#call_store(models2, ['en'], 40, 150, True, args, 10, 50)
-#call_store(models3, ['en', 'de'], 50, 300, True, args, 10, 50)
-call_store(models4, ['en'], 0, 350, False, args, 10, 50)
-call_store(models5, ['de'], 0, 350, False, args, 10, 50)
-
-
-#store_samples(model="poetry-gpt2-small", lang='en', total=10, num_samples=100, min_length=40, max_length=150)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang', type=str)
+    parser.add_argument('--trained_model_path', type=str)
+    parser.add_argument('--do_sample', action="store_false")
+    parser.add_argument('--min_length', type=int, default=20)
+    parser.add_argument('--max_length', type=int, default=150)
+    parser.add_argument('--total', type=int, default=500)
+    parser.add_argument('--num_samples', type=int, default=10)
+    parser.add_argument('--temperature', type=float, default=1.0)
+    parser.add_argument('--top_k', type=int, default=0)
+    parser.add_argument('--top_p', type=float, default=1.0)
+    parser.add_argument('--penalty_alpha', type=float, default=None)
+    parser.add_argument('--num_beams', type=int, default=1)
+    parser.add_argument('--num_beam_groups', type=int, default=1)
+    args = parser.parse_args()
