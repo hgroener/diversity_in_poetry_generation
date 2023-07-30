@@ -18,9 +18,8 @@ sys.path.append(parent)
 from helper_functions import *
 
 
-def generate_quatrains(model, lang='en', min_length=20, max_length=100, num_samples=1000, save=False, device=0,
-                      temperature=1.0, top_k=0, top_p = 1.0, total=100, penalty_alpha=None, do_sample=True,
-                      num_beams=1, num_beam_groups=1):
+def generate_quatrains(model, lang, min_length, max_length, num_samples, temperature, top_k,
+                       top_p, total, penalty_alpha, do_sample, num_beams, num_beam_groups, device=0):
     
     if 'bygpt5' in model:
         generator = TextGenerationPipeline(model=ByGPT5LMHeadModel.from_pretrained(model),
@@ -53,15 +52,14 @@ def generate_quatrains(model, lang='en', min_length=20, max_length=100, num_samp
             continue
         for quatrain in quatrains:
             samples.append(quatrain)
-        #samples.append(random.choice(quatrains))
+        #samples.append(random.choice(quatrains)) TODO: better select randomly
         
     samples = get_dataset(samples, lang)
     return samples
 
 
-def sample_pipeline(model, total=100, temperature=1.0, top_k=0, top_p=1.0, penalty_alpha=None, lang='en',
-                    do_sample=True, num_beams=1, num_beam_groups=1, num_samples=5, min_length=50,
-                    max_length=100):
+def sample_pipeline(model, lang, total, temperature, top_k, top_p, penalty_alpha, do_sample, num_beams,
+                    num_beam_groups, num_samples, min_length, max_length):
     
     sample = generate_quatrains(model=model, num_samples=num_samples, total=total, 
                                 temperature=temperature, top_k=top_k, 
@@ -121,6 +119,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', type=str)
     parser.add_argument('--trained_model_path', type=str)
+    parser.add_argument('--model_name', type=str)
+    parser.add_argument('--out_path', type=str)
     parser.add_argument('--do_sample', action="store_false")
     parser.add_argument('--min_length', type=int, default=20)
     parser.add_argument('--max_length', type=int, default=150)
@@ -132,4 +132,42 @@ if __name__ == "__main__":
     parser.add_argument('--penalty_alpha', type=float, default=None)
     parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--num_beam_groups', type=int, default=1)
+
     args = parser.parse_args()
+
+    # generate and process samples
+    sample, stats, dist = sample_pipeline(model=args.trained_model_path,
+                                          lang=args.lang, 
+                                          total=args.total,
+                                          temperature=args.temperature,
+                                          top_k=args.top_k,
+                                          top_p=args.top_p,
+                                          penalty_alpha=args.penalty_alpha,
+                                          do_sample=args.do_sample,
+                                          num_beams=args.num_beams,
+                                          num_beam_groups=args.num_beam_groups,
+                                          num_samples=args.num_samples,
+                                          min_length=args.min_length,
+                                          max_length=args.max_length,
+                                          )
+    
+    # define name of sample
+    name ='temp{}_top_k{}_top_p{}_pen{}'.format(args.temperature, args.top_k, args.top_p, args.penalty_alpha)
+    
+    # construct save path
+    save_path = args.out_path + '/' +  args.model_name + '/' + args.lang
+
+    # create save path if non existent
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    # save data
+    sample.save_to_disk(save_path + '/' + name)
+    with open(save_path + '/' + name + '/stats.pkl', 'wb') as f:
+        pickle.dump(stats, f)
+    with open(save_path + '/' + name + '/dist.pkl', 'wb') as f:
+        pickle.dump(dist, f)
+    
+
+    
+
