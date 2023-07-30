@@ -14,8 +14,13 @@ python process_structured_adversary_samples.py
 ```
 
 ## Unconditioned and style-conditioned LLMs
-Run
+To generate a (vanilla) sample for a trained LLM, run
 
 ```
-python sample_generation_llm.py
+python sample_generation_llm.py --lang lang \
+--trained_model_path trained_model_path \
+--model_name model_name \
+--out_path path_to_store_sample \
 ```
+Refer to sample_generation_llm.py to get a list of available sampling techniques.
+
