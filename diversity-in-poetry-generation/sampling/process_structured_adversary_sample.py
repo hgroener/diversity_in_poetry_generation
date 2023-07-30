@@ -2,20 +2,12 @@ import sys
 import os
 import json
 
-# getting the name of the directory
-# where the this file is present.
+# routine to import parent folder
 current = os.path.dirname(os.path.realpath(__file__))
- 
-# Getting the parent directory name
-# where the current directory is present.
 parent = os.path.dirname(current)
- 
-# adding the parent directory to
-# the sys.path.
 sys.path.append(parent)
 
 from helper_functions import *
-
 
 def process_sa(path, temp, lang='en', num_samples=500):
     with open(path) as f:
