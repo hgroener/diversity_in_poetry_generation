@@ -14,7 +14,10 @@ conda install -c conda-forge libarchive
 ## Data Prepation
 
 ## Generators
+
 #### Deep-speare
 #### Structured-Adversary
 #### Unconditioned Large Language Models (LLMs)
 #### Style-conditioned LLMs
+
+## Analysis
