@@ -12,6 +12,7 @@ conda install -c conda-forge libarchive
 pip install evaluate
 pip install matplotlib
 pip install cydifflib
+pip install lexical-diversity
 ```
 
 ## Data Prepation
