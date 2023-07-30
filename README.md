@@ -13,6 +13,7 @@ pip install evaluate
 pip install matplotlib
 pip install cydifflib
 pip install lexical-diversity
+pip install sentence-transformers
 ```
 
 ## Data Prepation
