@@ -397,6 +397,7 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name, **tokenizer_kwargs)
     elif model_args.model_name_or_path:
         tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, **tokenizer_kwargs)
+        ## TODO Add bygpt5 tokenizer
     else:
         raise ValueError(
             "You are instantiating a new tokenizer from scratch. This is not supported by this script."
