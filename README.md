@@ -14,6 +14,7 @@ pip install matplotlib
 pip install cydifflib
 pip install lexical-diversity
 pip install sentence-transformers
+pip install spacy
 ```
 
 ## Data Prepation
