@@ -16,6 +16,8 @@ pip install cydifflib
 
 ## Data Prepation
 
+Refer to diversity-in-poetry-generation/training_data/ReadMe.md in order to preprocess training data. 
+
 ## Generators
 
 #### Deep-speare
