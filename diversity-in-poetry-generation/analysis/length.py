@@ -4,11 +4,10 @@ from scipy.stats import chi2_contingency
 from scipy.stats import wasserstein_distance
 import numpy as np
 import os
-import pickle
 import json
 import argparse
 
-current_path=os.path.dirname(os.path.abspath(__file__))
+current_path = os.path.dirname(os.path.realpath(__file__))
 sample_path = current_path + '/samples/'
 length_path=current_path + '/data/length/'
 
@@ -172,7 +171,6 @@ def process_training_data(lang):
     plt.subplots_adjust(bottom=0.15)
     plt.subplots_adjust(left=0.15)
     plt.hist(length, bins=30, facecolor = '#2ab0ff', edgecolor='#169acf', linewidth=0.5, density=True)
-    #plt.title(name + ": Max Similarity")
     plt.xlabel("Quatrain Length", fontsize=17)
     plt.ylabel("Densitiy", fontsize=17)
     plt.xticks(fontsize=12)
@@ -186,23 +184,27 @@ def process_training_data(lang):
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
+    parser.add_argument('--sample_path', type=str)
+    parser.add_argument('--quatrain_path', type=str)
     parser.add_argument('--lang', type=str)
-    parser.add_argument('--trained_model_path', type=str)
     parser.add_argument('--model_name', type=str)
     parser.add_argument('--out_path', type=str)
-    parser.add_argument('--do_sample', action="store_false")
-    parser.add_argument('--min_length', type=int, default=20)
-    parser.add_argument('--max_length', type=int, default=150)
-    parser.add_argument('--total', type=int, default=500)
-    parser.add_argument('--num_samples', type=int, default=10)
-    parser.add_argument('--temperature', type=float, default=1.0)
-    parser.add_argument('--top_k', type=int, default=0)
-    parser.add_argument('--top_p', type=float, default=1.0)
-    parser.add_argument('--penalty_alpha', type=float, default=None)
-    parser.add_argument('--num_beams', type=int, default=1)
-    parser.add_argument('--num_beam_groups', type=int, default=1)
 
     args = parser.parse_args()
+
+    value_dict = {}
+
+    m, sd = mean_sd(args.sample_path)
+    minimum, maximum = min_max(args.sample_path)
+
+    hist_intersection = histogram_intersection(args.quatrain_path, args.sample_path)
+    wasserstein_distance = wasserstein(args.quatrain_path, args.sample_path)
+
+
+
+
+
+
 
     
     
