@@ -1,7 +1,7 @@
 # Sampling
 
 ## Deep-speare and Structured-Adversary
-For model inference, see x and y. To process raw samples, run
+For model inference, see [Deep-speare](https://github.com/b3nji87/deepspeare-fork) and [Structured-Adversary](https://github.com/b3nji87/Structured-Adversary-Fork). To process raw samples, run
 
 ```
 python process_deepspeare_samples.py --raw_sample_path path_to_text_file \
