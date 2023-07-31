@@ -14,6 +14,17 @@ from helper_functions import *
 
 
 def tokenize(quatrains):
+    """
+    Tokenizes a set of quatrains on the quatrain (sentence) level
+    
+    Parameters:
+    ----------
+    quatrains : Dataset containing quatrains
+
+    Returns:
+    -------
+    tokens : List of tokenized quatrains. Each sublist represents one quatrain
+    """
     tokens = []
     flat = flatten_list(quatrains.map(join)['text'])
     for quatrain in flat:
@@ -23,6 +34,18 @@ def tokenize(quatrains):
 
 
 def averaged_ttr(sentence_tokens):
+    """
+    Calculates the type token ratio on the quatrain level of a dateset and returns 
+    the averaged type token ratio.
+    
+    Parameters:
+    ----------
+    sentence_tokens : Dataset of tokenized quatrains (sentence level)
+
+    Returns:
+    -------
+    averaged type token ratio (ATTR)
+    """
     ttr = 0
     for sentence in sentence_tokens:
         ttr += ld.ttr(sentence)
@@ -30,6 +53,17 @@ def averaged_ttr(sentence_tokens):
     
 
 def lexical_div(quatrains):
+    """
+    Calculates different metrics for lexical diversity for a dateset of quatrains
+    
+    Parameters:
+    ----------
+    quatrains : Dataset
+
+    Returns:
+    -------
+    res: Dictionary containing the calculated metrics
+    """
     res = {}
     sentence_tokens = tokenize(quatrains)
     #tokenized corpus
@@ -46,7 +80,17 @@ def lexical_div(quatrains):
 
 
 def ld_quatrain(training_data_path):
+    """
+    Calculates different metrics for lexical diversity for a training corpus
     
+    Parameters:
+    ----------
+    training_data_path: Path to dataset
+
+    Returns:
+    -------
+    res : Dictionary containing the calculated metrics
+    """
     quatrain = load_from_disk(training_data_path)
     
     res = lexical_div(quatrain)
@@ -55,7 +99,17 @@ def ld_quatrain(training_data_path):
 
 
 def ld_metrics(sample_path):
+    """
+    Calculates different metrics for lexical diversity for a sample of quatrains
     
+    Parameters:
+    ----------
+    sample_path: Path to dataset
+
+    Returns:
+    -------
+    res : Dictionary containing the calculated metrics
+    """
     loaded_sample = load_from_disk(sample_path)
 
     res = lexical_div(loaded_sample)

@@ -10,6 +10,18 @@ import os
 
 # chi square test
 def get_contigents_len(ds1, ds2):
+    """
+    Generates a contingency table for two discrete length samples
+    
+    Parameters:
+    ----------
+    ds1 : First dataset
+    ds2 : Second dataset
+
+    Returns:
+    -------
+    Array representing a contingency table
+    """
     len1 = ds1['length']
     len2 = ds2['length']
     minimum = np.min(len1 + len2)
@@ -25,6 +37,18 @@ def get_contigents_len(ds1, ds2):
 
 # returns p-value of the chi square test
 def chi_square_len(path1, path2):
+    """
+    Performs a chi square test contingency test
+    
+    Parameters:
+    ----------
+    path1 : Path to first dataset
+    path2 : Path to second dataset
+
+    Returns:
+    -------
+    p-value of the chi square test
+    """
     ds1 = load_from_disk(path1)
     ds2 = load_from_disk(path2)
     c = get_contigents_len(ds1, ds2)
@@ -32,6 +56,18 @@ def chi_square_len(path1, path2):
 
 
 def histogram_intersection(path1, path2):
+    """
+    Calculates the shared area of two normalized histograms
+    
+    Parameters:
+    ----------
+    path1 : Path to first dataset
+    path2 : Path to second dataset
+
+    Returns:
+    -------
+    intersection : Portion of the shared are (a value between 0 and 1)
+    """
     ds1 = load_from_disk(path1)
     ds2 = load_from_disk(path2)
     len1 = ds1['length']
@@ -46,6 +82,18 @@ def histogram_intersection(path1, path2):
 
 
 def mean_sd(path):
+    """
+    Calculates the mean and the standard deviation for a discrete length dataset
+    
+    Parameters:
+    ----------
+    path  : Path to dataset
+
+    Returns:
+    -------
+    mean : Mean length
+    std : Standard deviation of length
+    """
     ds = load_from_disk(path)
     length = ds['length']
     mean = np.mean(length)
@@ -54,12 +102,36 @@ def mean_sd(path):
 
 
 def min_max(path):
+    """
+    Calculates the minimum and the maximum in a discrete length dataset
+    
+    Parameters:
+    ----------
+    path  : Path to dataset
+
+    Returns:
+    -------
+    min : Minimum
+    max: Maximum
+    """
     ds = load_from_disk(path)
     length = ds['length']
     return np.min(length), np.max(length)
 
 
 def wasserstein(path1, path2):
+    """
+    Calculates the Wasserstain distance (L1 norm) between two discrete samples
+    
+    Parameters:
+    ----------
+    path1 : Path to first dataset
+    path2 : Path to second dataset
+
+    Returns:
+    -------
+    wasserstein_distance : Calculated norm
+    """
     ds1 = load_from_disk(path1)
     ds2 = load_from_disk(path2)
     length1 = ds1['length']
@@ -68,6 +140,17 @@ def wasserstein(path1, path2):
 
 
 def plot_len_figures(sample_path):
+    """
+    Generates a length histogram for a given sample
+    
+    Parameters:
+    ----------
+    sample_path : Path to dataset
+
+    Returns:
+    -------
+    fig : Figure object representing the histogram of length values
+    """
     
     ds = load_from_disk(sample_path)
     length = ds['length']
@@ -85,7 +168,18 @@ def plot_len_figures(sample_path):
 
 
 def process_training_data(quatrain_path):
+    """
+    Calculates different metrics and plots a histogram for the length values of a dateset
     
+    Parameters:
+    ----------
+    quatrain_path : Path to dataset
+
+    Returns:
+    -------
+    res : Dictionary containing metric values
+    fig : Figure object representing the histogram of length values
+    """
     quatrain = load_from_disk(quatrain_path)
     length = quatrain['length']
     res = {}

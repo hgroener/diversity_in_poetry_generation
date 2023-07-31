@@ -19,7 +19,20 @@ from helper_functions import *
 
 
 def memorization(quatrains, generated_data_path, cutoff, num_to_test):
+    """
+    Calculates the portion of memorized quatrains for a sample
+    
+    Parameters:
+    ----------
+    quatrains : Training dataset
+    generated_data_path : Path to processed sample
+    cutoff : Threshold value that determines whether a generated quatrain is classified as a copy
+    num_to_test : Debug parameter to control the numer of quatrains to be tested
 
+    Returns:
+    -------
+    Portion of the sample classified as copy
+    """
     generated_data = load_from_disk(generated_data_path)
 
     if num_to_test:

@@ -16,8 +16,19 @@ from helper_functions import *
 
 
 def chi2_test(path1, path2, attribute):
+    """
+    Performs a chi square test of contigency between two discrete samples
     
-    # load stats files
+    Parameters:
+    ----------
+    path1 : Path to first dataset
+    path2 : Path to second dataset
+    attribute : rhyme or meter
+
+    Returns:
+    -------
+    p : p value derived from the test
+    """
     with open(path1, 'rb') as f:
         ds1 = pickle.load(f)
     with open(path2, 'rb') as d:
@@ -32,6 +43,21 @@ def chi2_test(path1, path2, attribute):
 
 #only for rhyme
 def plot_stacked(rhyme, reps, length):
+    """
+    Plots a stacked bar chart
+    
+    Parameters:
+    ----------
+    rhyme : Discrete distribution of rhymes
+    reps : Discrete distribution of repetitions
+    length : Dataset length
+
+    Returns:
+    -------
+    diff : Normalized difference between ryhmes and repetitions
+    reps : Normalized repetitions
+    fig : Stacked bar chart
+    """
     rhyme = {k: v / length for k, v in rhyme.items()}
     reps = {k: v / length for k, v in reps.items()}
     reps['ABCD'] = 0
@@ -52,7 +78,21 @@ def plot_stacked(rhyme, reps, length):
 
 
 def meter_rhyme_metrics(sample_path, training_data_path):
+    """
+    Plots a stacked bar chart for rhymes and repetitions, a bar chart for meters
+    and calculates different metrics for meter and rhyme
+    
+    Parameters:
+    ----------
+    sample_path : Path so sample dataset
+    training_data_path : Path to training dataset
 
+    Returns:
+    -------
+    res: Dictionary containing different metrics regarding meter and rhyme
+    stacked_fig : Stacked bar chart for rhymes and repetitions
+    fig : Bar chart for meters
+    """
     res = {}
 
     # load sample stats
@@ -98,6 +138,18 @@ def meter_rhyme_metrics(sample_path, training_data_path):
 
 
 def process_training_data(quatrain_path):
+    """
+    Plots a stacked bar chart for rhymes and repetitions and a bar chart for meters
+    
+    Parameters:
+    ----------
+    quatrain_path : Path so training dataset
+
+    Returns:
+    -------
+    stacked_fig : Stacked bar chart for rhymes and repetitions
+    fig : Bar chart for meters
+    """
     
     # we need the statistics files containing information about meter, rhyme, repetition
     quatrain_path = quatrain_path + '/stats.pkl'

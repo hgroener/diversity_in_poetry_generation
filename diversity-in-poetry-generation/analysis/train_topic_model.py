@@ -39,6 +39,20 @@ from helper_functions import *
 
 
 def flemmatize(flat_corpus, lang):
+    """
+    Lemmatizes a corpus of quatrains, removes predefined stop words, removes
+    puncuation and filteres out short tokens
+    
+    Parameters:
+    ----------
+    flat_corpus : Corpus of quatrains that has been flattened (e.g. the inner list
+    structure is removed)
+    lang : language 
+
+    Returns:
+    -------
+    res : list of tokens
+    """
     punct = string.punctuation + '“'
     punct = punct + '”'
     punct = punct + '’'
@@ -83,7 +97,7 @@ def flemmatize(flat_corpus, lang):
     return res
 
 
-def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3, workers=3):
+def compute_coherence_values(dictionary, corpus, texts, limit, start, step, workers):
     """
     Compute c_v coherence for various number of topics
 
@@ -93,6 +107,9 @@ def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3, 
     corpus : Gensim corpus
     texts : List of input texts
     limit : Max num of topics
+    start : Min num of topics
+    step : Step size used to increase the num of topics
+    workers : Number of CPU threads
 
     Returns:
     -------
@@ -113,8 +130,27 @@ def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3, 
     return model_list, coherence_values
 
 
-def LDA(ds, limit=None, minTopics=2, maxTopics=50, step=6, workers=8, lang='en'):
-    
+def LDA(ds, limit, minTopics, maxTopics, step, workers, lang):
+    """
+    Determine the optimal number of topics based on the c_v score
+
+    Parameters:
+    ----------
+    ds : Training dataset
+    limit : Debug parameter to limit the number of quatrains to be processed by the model
+    min_topics : Min num of topics
+    max_topics : Max num of topics
+    step : Step size used to increase the num of topics
+    workers : Number of CPU threads
+    lang : language
+
+    Returns: 
+    -------
+    optimal_model : LDA model achieving the highest c_v score
+    corpus : Doc2bow representation of the training corpus
+    id2word : Dictionary with word/id pairs
+    fig : Plot of coherence values as a function of number of topics
+    """
     # Flatten and lemmatize dataset 
     if limit and limit < len(ds):
         ds = ds.shuffle().filter(lambda _, idx: idx <= limit - 1, with_indices=True)
@@ -157,7 +193,19 @@ def LDA(ds, limit=None, minTopics=2, maxTopics=50, step=6, workers=8, lang='en')
 
 
 def visualizeTopics(m, c, ids, mds='mmds'):
-    # Visualize the topics
+    """
+    Generates a pyldavis object representing a visualization of the topic model
+    
+    Parameters:
+    ----------
+    m : LDA model
+    c : Doc2bow corpus
+    ids : Dictionary of word/id pairs
+
+    Returns:
+    -------
+    vis : pyldavis object
+    """
     vis = pyLDAvis.gensim_models.prepare(m, c, ids, mds=mds)
     return vis
 

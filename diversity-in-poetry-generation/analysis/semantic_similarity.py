@@ -22,6 +22,20 @@ from helper_functions import *
 # load emb also every step?
 
 def max_sim_dist(emb, sample_path, model='distiluse-base-multilingual-cased-v1', device='cuda:0'):
+    """
+    Calculates the maximum similarity value in the training data for each quatrain in a sample
+    
+    Parameters:
+    ----------
+    emb : Embedded training data
+    sample_path : Path to sample dataset
+    model : Model used to calculate embeddings
+    devide : If GPU resources are available, they will be used. Otherwise use CPU
+
+    Returns:
+    -------
+    res : List of maximum similarity values 
+    """
     model = SentenceTransformer(model)
     sentences = load_from_disk(sample_path)
     sentences = flatten_list(sentences.map(join)['text'])
@@ -37,8 +51,19 @@ def max_sim_dist(emb, sample_path, model='distiluse-base-multilingual-cased-v1',
 
 
 def ss_metrics(sample_path, emb_path):
+    """
+    Calculates different statistical metrics regarding the meximum similarity values
+    
+    Parameters:
+    ----------
+    sample_path : Path to sample dataset
+    emb_path : Path to embedded training data
 
-    #load pretrained corpus embeddings
+    Returns:
+    -------
+    res: Dictionary containing different statistical metrics
+    fig : Histogram of max similarity values
+    """
     emb = torch.load(emb_path)
 
     sims = max_sim_dist(emb, sample_path)
@@ -77,7 +102,20 @@ def ss_metrics(sample_path, emb_path):
 
     
 def create_corpus_embeddings(training_data_path, save_path, lang):
+    """
+    Calculates embedding vectors for the training data and saves vectors
+    to a chosen path. Each vector represents one quatrain.
+    
+    Parameters:
+    ----------
+    training_data_path : Path to training dataset
+    save_path : Path to save 
+    lang : language
 
+    Returns:
+    -------
+    
+    """
     sentences = load_from_disk(training_data_path)
     sentences = flatten_list(sentences.map(join)['text'])
 

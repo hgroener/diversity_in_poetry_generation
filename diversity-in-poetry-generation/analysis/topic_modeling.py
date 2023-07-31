@@ -23,11 +23,40 @@ from train_topic_model import flemmatize
 
 
 def format_func(value, tick_number=None):
+    """
+    Helper function to format a large number in a readable format
+    
+    Parameters:
+    ----------
+    value : Number to be formated
+    tick_number : None
+
+    Returns:
+    -------
+    Formated number (e.g. 16k instead of 16000)
+    """
     num_thousands = 0 if abs(value) < 1000 else floor (log10(abs(value))/3)
     value = round(value / 1000**num_thousands, 2)
     return f'{value:g}'+' KMGTPEZY'[num_thousands]
 
 def get_dominant_topics(sample_path, trained_topic_model, id2word, lang):
+    """
+    Determines the most dominant topics in a sample based on their occurence
+    
+    Parameters:
+    ----------
+    sample_path : Path to sample dataset
+    trained_topic_model : LDA model
+    id2word: Dictionary containing word/id pairs
+    lang : Language
+
+    Returns:
+    -------
+    sample_topic_vectors : List of vectors representing the weight of each topic in each quatrain. 
+    Zero values are mantained
+    most_probable_topics : List of most probable topics per quatrain
+    number of distinct most relevant topics 
+    """
     samples = load_from_disk(sample_path)
     
     if len(samples) > 500:
@@ -59,7 +88,22 @@ def get_dominant_topics(sample_path, trained_topic_model, id2word, lang):
 
 
 def tm_metrics(sample_path, trained_model_path, lang):
+    """
+    Determines the most dominant topics in a sample based on their occurence
     
+    Parameters:
+    ----------
+    sample_path : Path to sample dataset
+    trained_model_path : Path to trained LDA model
+    lang : Language
+
+    Returns:
+    -------
+    value_dict : Dictionary containing the top 10 words for the top 10 relevant topics in a sample 
+    as well as the percentage of training data topics covered in each top topic
+    fig : Bar chart of the top dominant 10 topics based on the number of quatrains thst are represented by each 
+    top topic
+    """
     value_dict = {}
     
     LDA = LdaMulticore.load(trained_model_path + 'model')
@@ -93,6 +137,19 @@ def tm_metrics(sample_path, trained_model_path, lang):
     return value_dict, fig
 
 def most_relevant_topics_quatrain(trained_path):
+    """
+    Determines the most dominant topics in the training based on their occurence
+    
+    Parameters:
+    ----------
+    trained_path : Path to trained LDA model
+
+    Returns:
+    -------
+    value_dict : Dictionary containing the top 10 words for the top 10 relevant topics in the training data
+    fig : Bar chart of the top dominant 10 topics based on the number of quatrains thst are represented by each 
+    top topic
+    """
     
     LDA = LdaMulticore.load(trained_path + 'model')
     corpus = corpora.MmCorpus(trained_path + 'corpus.mm')
@@ -158,7 +215,7 @@ if __name__ == '__main__':
            top_bar.savefig(args.save_path + '/' + args.lang + '-top10-QuaTrain.png', dpi=100)
        pprint.pprint(top_topics)
     else:
-        top_topics, top_bar = tm_metrics(args.sample_path, args.trained_model_path, args.sample_path)
+        top_topics, top_bar = tm_metrics(args.sample_path, args.trained_model_path, args.lang)
         if args.save_path:
            top_bar.savefig(args.save_path + '/' + args.lang + '-top10.png', dpi=100)
         pprint.pprint(top_topics)
