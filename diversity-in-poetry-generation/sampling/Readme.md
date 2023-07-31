@@ -30,5 +30,5 @@ python sample_generation_llm.py --lang lang \
 --model_name model_name \
 --out_path path_to_store_sample \
 ```
-Refer to sample_generation_llm.py to get a list of available sampling techniques.
+Refer to sample_generation_llm.py to get a list of available sampling and searching techniques.
 
