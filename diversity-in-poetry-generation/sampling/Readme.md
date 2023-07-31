@@ -4,13 +4,21 @@
 For model inference, see x and y. To process raw samples, run
 
 ```
-python process_deepspeare_samples.py
+python process_deepspeare_samples.py --raw_sample_path path_to_text_file \
+--lang lang \
+--save_path path_to_save_folder \
+--save_name name_of_saved_sample \
+--temperature temp_used_during_inference
 ```
 
 and 
 
 ```
-python process_structured_adversary_samples.py
+python process_structured_adversary_samples.py --raw_sample_path path_to_text_file \
+--lang lang \
+--save_path path_to_save_folder \
+--save_name name_of_saved_sample \
+--temperature temp_used_during_inference
 ```
 
 ## Unconditioned and style-conditioned LLMs
