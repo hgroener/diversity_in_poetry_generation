@@ -11,11 +11,11 @@ python parse_sonnets.py --lang en --get_wv True --vector_size 100
 ```
 Refer to *parse_sonnets.py* to get a full list of word2vec parameters. 
 
-### Unconditioned training for Large Language Models (LLMs)
+### Unconditioned Training for Large Language Models (LLMs) and Dataset Annotation
 
 Execute
 ```
 python parse_quatrain.py --lang de
 ```
 to generate text files containing line separated quatrains extracted from QuaTrain. We will use these files as input data 
-for training LLMs (e.g. GPT2 and ByGPT5) in an unconditioned manner.
+for training LLMs (e.g. GPT2 and ByGPT5) in an unconditioned manner. Further, the above command annotates the training data and derives different statistics regarding length, meter and rhyme.
