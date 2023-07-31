@@ -1,6 +1,7 @@
 from datasets import load_from_disk
 import os
 import sys
+import pprint
 
 # faster implementation of SequenceMatcher
 from cydifflib import SequenceMatcher
@@ -48,4 +49,4 @@ if __name__ == '__main__':
     memorization_rate = memorization(quatrains=quatrains, generated_data=args.sample_path, 
                                     cutoff=args.cutoff, num_to_test=args.num_to_test)
 
-    print("Memorization rate: {}".format(memorization_rate))
+    pprint.pprint(memorization_rate)

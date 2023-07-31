@@ -5,6 +5,7 @@ from scipy.stats import wasserstein_distance
 import numpy as np
 import json
 import argparse
+import os
 
 
 # chi square test
@@ -119,8 +120,15 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    if args.out_path:
+        # create save path if non existent
+        if not os.path.exists(args.out_path):
+            os.makedirs(args.out_path)
+
     if args.training_data_only == True:
+        
         res, fig = process_training_data(args.quatrain_path)
+                
         fig.savefig(args.out_path + '/' + args.lang + '-Quatrain.png', dpi=100)
         with open(args.out_path + '/' + args.lang + '-QuaTrain.json', 'w') as f:
             json.dump(res, f)
@@ -146,7 +154,3 @@ if __name__ == '__main__':
         fig.savefig(args.out_path + '/' + args.lang + '-hist-' + args.out_name + '.png' , dpi=100)
         with open(args.out_path + '/' + args.lang + '-metrics-' + args.out_name + '.json', 'w') as f:
             json.dump(value_dict, f)
-
-
-
-

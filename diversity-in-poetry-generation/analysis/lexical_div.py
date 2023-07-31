@@ -3,6 +3,7 @@ from lexical_diversity import lex_div as ld
 from datasets import load_from_disk
 import sys
 import argparse
+import pprint
 
 # routine to import parent folder
 current_path = os.path.dirname(os.path.realpath(__file__))
@@ -75,5 +76,5 @@ if __name__ == '__main__':
     else:
         res = ld_metrics(args.sample_path)
     
-    print ('Detected metrics: {}'.format(res))
+    pprint.pprint(res)
 

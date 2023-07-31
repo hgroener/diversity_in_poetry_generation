@@ -138,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument("--trained_model_path", type=str)
     parser.add_argument("--sample_path", type=str)
     parser.add_argument("--save_path", type=str)
+    parser.add_argument("--lang", type=str)
     args = parser.parse_args()
 
     # load language specific predefined stop words

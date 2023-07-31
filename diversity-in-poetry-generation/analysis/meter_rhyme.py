@@ -1,11 +1,11 @@
 from matplotlib import pyplot as plt
 from scipy.stats import chi2_contingency
 import os
-import json
 import pickle
 import random
 import sys
 import argparse
+import pprint
 
 # routine to import parent folder
 current_path = os.path.dirname(os.path.realpath(__file__))
@@ -132,6 +132,11 @@ if __name__ == '__main__':
     parser.add_argument("--save_path", type=str)
     args = parser.parse_args()
 
+    if args.save_path:
+        # create save path if non existent
+        if not os.path.exists(args.save_path):
+            os.makedirs(args.save_path)
+
     if args.training_data_only == True:
         stacked_rhymes, meters = process_training_data(args.quatrain_path)
         if args.save_path:
@@ -143,7 +148,7 @@ if __name__ == '__main__':
         if args.save_path:
             stacked_rhymes.savefig(args.save_path + '/' + 'rhyme.png', dpi=100)
             meters.savefig(args.save_path + '/' + 'meter.png', dpi=100)
-        print('p values: {}'.fotmat(res))
+        pprint.pprint(res)
 
     
 
