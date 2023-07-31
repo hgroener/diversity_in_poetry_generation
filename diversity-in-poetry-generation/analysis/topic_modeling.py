@@ -4,7 +4,6 @@ import gensim.corpora as corpora
 from gensim.models import LdaMulticore
 from matplotlib import pyplot as plt
 from collections import Counter
-import json
 import argparse
 from math import log10, floor
 import random
@@ -46,9 +45,9 @@ def get_dominant_topics(sample_path, trained_topic_model, id2word, lang):
     for quatrain in samples_topic_vectors_distilled:
         quatrain.sort(key = lambda x: x[1], reverse=True, )
         if len(quatrain) > 0:
-            tup = random.choice(quatrain)
-            #most_probable_topics.append(quatrain[0][0])
-            most_probable_topics.append(tup[0])
+            #tup = random.choice(quatrain)
+            most_probable_topics.append(quatrain[0][0])
+            #most_probable_topics.append(tup[0])
     
     num_topics = []
     for entry in samples_topic_vectors_distilled:
