@@ -47,7 +47,7 @@ def load_model(model_name="meta-llama/Llama-2-7b-hf", instruct=False, conditione
     print("\nModel is on cuda: ", next(model.parameters()).is_cuda)
     #print(model)
     tokenizer.pad_token = tokenizer.eos_token
-    #tokenizer.padding_side = "right"
+    tokenizer.padding_side = "right"
     #Todo: maybe add special tokens
 
 
