@@ -10,6 +10,7 @@ from transformers.pipelines.text_generation import TextGenerationPipeline
 #os.environ['CUDA_VISIBLE_DEVICES']="0,1"
 
 print("gpu available: ", torch.cuda.is_available())
+torch.cuda.empty_cache()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 access_token = "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"
 
@@ -43,11 +44,15 @@ def load_model(model_name="meta-llama/Llama-2-7b-hf", instruct=False, conditione
         model = ByGPT5LMHeadModel.from_pretrained(model_name, device_map='auto')
     else:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
+        print("Tokenizer padding side:", tokenizer.padding_side)
         model = AutoModelForCausalLM.from_pretrained(model_name, device_map='auto')
     print("\nModel is on cuda: ", next(model.parameters()).is_cuda)
     #print(model)
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right"
+    tokenizer.add_special_tokens({"pad_token": "[PAD]", "bos_token": "<quatrain>", "eos_token": "</quatrain>"})
+    #tokenizer.pad_token = "[PAD]"
+    #tokenizer.bos_token = "<quatrain>"
+    #tokenizer.eos_token = "</quatrain>"
+    #tokenizer.padding_side = "right"
     #Todo: maybe add special tokens
 
 
@@ -149,10 +154,8 @@ def create_prompt(df_row, lang: str, conditioned=False, detokenizer=None, tokeni
         #prompt += f"{BASIC_PROMPT}\n{quatrain}{tokenizer.eos_token}"
         #prompt += f"{BASIC_PROMPT}\n[Q] {quatrain}{tokenizer.eos_token}"
         prefix = ""
-    if bp_and_tags:
-        prompt += prefix + BASIC_PROMPT + f"{quatrain.strip()}</quatrain>{tokenizer.eos_token}"
-    else:
-        prompt += prefix + quatrain.strip() + tokenizer.eos_token
+
+    prompt += prefix + quatrain.strip() + tokenizer.eos_token
     #print(prompt)
     #raise ValueError
     return prompt
@@ -186,7 +189,7 @@ class CustomCallback(TrainerCallback):
             while True:
                 try:
                     if "bygpt5" in str(model.config_class).lower():
-                        results = pipe(prompt, do_sample=True,top_k=50,temperature=0.6,top_p=0.9,  max_new_tokens=200, min_new_tokens=10,
+                        results = pipe(prompt, do_sample=True,top_k=50,temperature=0.6,top_p=0.9,  max_new_tokens=500, min_new_tokens=10,
                                        repetition_penalty=1.2, )
                     else:
                         results = pipe(prompt)
@@ -198,6 +201,7 @@ class CustomCallback(TrainerCallback):
             print(f'\n---------Out {i + 1} of epoch {state.epoch}:')
             print(results[0]['generated_text'])
             print('---------Out ends.')
+            print("text length: ", len(results[0]["generated_text"]))
         print("*" * 30)
 
 
@@ -230,8 +234,6 @@ def main(args):
     gc.collect()
     torch.cuda.empty_cache()
     tokenizer, model = load_model(args.model_name, args.instruct, args.conditioned, args.bp_and_tags)
-    if "bygpt5" in args.model_name.lower():
-        tokenizer.add_special_tokens({"bos_token": tokenizer.eos_token})
     global BASIC_PROMPT
     if args.bp_and_tags:
         BASIC_PROMPT = "Write a quatrain below:\n<quatrain>"
@@ -245,7 +247,7 @@ def main(args):
         dataset = dataset.map(tokenize_function, fn_kwargs={"tokenizer": tokenizer}, batched=True)
         #print(dataset)
         eval_dataset = eval_dataset.map(tokenize_function, fn_kwargs={"tokenizer": tokenizer}, batched=True)
-        data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+        data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False, pad_to_multiple_of=args.max_len)
 
 
     print('\nData sample:\n', dataset['text'][0])
@@ -315,7 +317,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-m', '--model_name', default="meta-llama/Llama-2-7b-hf", type=str)
     parser.add_argument('--out_dir', default="tmp", type=str)
-    parser.add_argument('--data_dir', default="../data/train", type=str)
+    parser.add_argument('--data_dir', default="diversity-in-poetry-generation/training_data/dataset", type=str)
     parser.add_argument('--lang', default="en", type=str)
     parser.add_argument('-bs', '--batch_size', default=16, type=int)
     parser.add_argument('-lr', '--learning_rate', default=4e-05, type=float)
@@ -330,6 +332,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
     main(args)
+
 
 
 
