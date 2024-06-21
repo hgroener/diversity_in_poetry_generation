@@ -1,5 +1,7 @@
-# This is a fork of the repository https://github.com/b3nji87/master-thesis-diversity-in-poetry-generation
-# Master Thesis: Diversity in Poetry Generation
+# Diversity in Poetry Generation
+
+# Soon to be updated!
+
 This repository contains code that can be used to reproduce the results obtained in the master thesis project "Diversity in Poetry Generation".
 
 
